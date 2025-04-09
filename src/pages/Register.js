@@ -61,18 +61,27 @@ const Register = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log("Submitting form with values:", values);
-      console.log("Current role at submission:", values.role);
-      const { success, error } = await register(values);
-      if (success) {
-        // Navigate to appropriate dashboard based on user role
-        if (values.role === 'customer') {
-          navigate('/customer/dashboard');
-        } else if (values.role === 'rider') {
-          navigate('/rider/dashboard');
+      try {
+        console.log("Submitting form with values:", values);
+        const { success, error, data } = await register(values);
+        
+        if (success) {
+          // Store the token in localStorage
+          localStorage.setItem('token', data.token);
+          
+          // Navigate to appropriate dashboard based on user role
+          if (values.role === 'customer') {
+            navigate('/customer/dashboard');
+          } else if (values.role === 'rider') {
+            navigate('/rider/dashboard');
+          }
+        } else {
+          console.error("Registration error:", error);
+          // You might want to show an error message to the user here
         }
-      } else {
-        console.error("Registration error:", error);
+      } catch (err) {
+        console.error("Registration error:", err);
+        // You might want to show an error message to the user here
       }
     },
   });

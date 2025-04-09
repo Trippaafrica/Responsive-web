@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Paper,
@@ -7,7 +7,8 @@ import {
   Button,
   Box,
   Grid,
-  Divider
+  Divider,
+  Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -28,15 +29,8 @@ const validationSchema = yup.object({
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [error, setError] = useState(null);
   const [isRider, setIsRider] = useState(false);
-
-  useEffect(() => {
-    const preferredRole = localStorage.getItem('preferredRole');
-    if (preferredRole === 'rider') {
-      setIsRider(true);
-      localStorage.removeItem('preferredRole'); // Clear after use
-    }
-  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -45,11 +39,23 @@ const Login = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const { success } = await login(values.email, values.password);
-      if (success) {
-        // Get user role from metadata
-        const userRole = success.data.user.user_metadata.role;
-        navigate(userRole === 'rider' ? '/rider/dashboard' : '/customer/dashboard');
+      try {
+        setError(null);
+        const { success, error, data } = await login(values);
+        
+        if (success) {
+          // Navigate to appropriate dashboard based on user role
+          if (data.user.role === 'customer') {
+            navigate('/customer/dashboard');
+          } else if (data.user.role === 'rider') {
+            navigate('/rider/dashboard');
+          }
+        } else {
+          setError(error || 'Login failed. Please try again.');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred. Please try again.');
+        console.error('Login error:', err);
       }
     },
   });
@@ -81,6 +87,12 @@ const Login = () => {
           <Typography component="h1" variant="h4" gutterBottom>
             {isRider ? 'Rider Login' : 'Customer Login'}
           </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ width: '100%' }}>
             <TextField
