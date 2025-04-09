@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Paper,
@@ -6,11 +6,20 @@ import {
   TextField,
   Button,
   Grid,
-  Box
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import axios from 'axios';
+import Map from 'react-map-gl/dist/esm/components/map';
+import Marker from 'react-map-gl/dist/esm/components/marker';
+import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const validationSchema = yup.object({
   deliveryType: yup
@@ -59,6 +68,13 @@ const validationSchema = yup.object({
 
 const CreateDelivery = () => {
   const navigate = useNavigate();
+  const [pickupMarker, setPickupMarker] = useState(null);
+  const [destinationMarker, setDestinationMarker] = useState(null);
+  const [mapView] = useState({
+    latitude: 0,
+    longitude: 0,
+    zoom: 2
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -93,6 +109,23 @@ const CreateDelivery = () => {
       }
     },
   });
+
+  const handleMapClick = (event) => {
+    const { lngLat } = event;
+    if (!pickupMarker) {
+      setPickupMarker(lngLat);
+      formik.setFieldValue('pickupLocation.coordinates', {
+        lat: lngLat.lat,
+        lng: lngLat.lng
+      });
+    } else if (!destinationMarker) {
+      setDestinationMarker(lngLat);
+      formik.setFieldValue('destination.coordinates', {
+        lat: lngLat.lat,
+        lng: lngLat.lng
+      });
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
