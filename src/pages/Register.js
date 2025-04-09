@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Paper,
@@ -7,7 +7,9 @@ import {
   Button,
   Box,
   Grid,
-  Divider
+  Divider,
+  Alert,
+  MenuItem
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -48,6 +50,7 @@ const validationSchema = yup.object({
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [error, setError] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -56,48 +59,26 @@ const Register = () => {
       password: '',
       confirmPassword: '',
       phone: '',
-      role: 'customer', // Default to customer
+      role: 'customer',
       vehicleType: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        console.log("Submitting form with values:", values);
-        const { success, error, data } = await register(values);
+        setError(null);
+        const { success, error } = await register(values);
         
         if (success) {
-          // Store the token in localStorage
-          localStorage.setItem('token', data.token);
-          
-          // Navigate to appropriate dashboard based on user role
-          if (values.role === 'customer') {
-            navigate('/customer/dashboard');
-          } else if (values.role === 'rider') {
-            navigate('/rider/dashboard');
-          }
+          navigate('/login');
         } else {
-          console.error("Registration error:", error);
-          // You might want to show an error message to the user here
+          setError(error || 'Registration failed. Please try again.');
         }
       } catch (err) {
-        console.error("Registration error:", err);
-        // You might want to show an error message to the user here
+        setError('An unexpected error occurred. Please try again.');
+        console.error('Registration error:', err);
       }
     },
   });
-
-  const handleSignUpAsRider = () => {
-    // Toggle between rider and customer roles
-    console.log("Current role before toggle:", formik.values.role);
-    const newRole = formik.values.role === 'rider' ? 'customer' : 'rider';
-    console.log("New role after toggle:", newRole);
-    formik.setFieldValue('role', newRole);
-    
-    // Verify the role was updated
-    setTimeout(() => {
-      console.log("Role after setFieldValue:", formik.values.role);
-    }, 0);
-  };
 
   return (
     <Container maxWidth="sm">
@@ -120,8 +101,14 @@ const Register = () => {
           }}
         >
           <Typography component="h1" variant="h4" gutterBottom>
-            Register
+            Create Account
           </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ width: '100%' }}>
             <TextField
@@ -181,67 +168,58 @@ const Register = () => {
               helperText={formik.touched.phone && formik.errors.phone}
               margin="normal"
             />
-            
+            <TextField
+              fullWidth
+              id="role"
+              name="role"
+              select
+              label="Role"
+              value={formik.values.role}
+              onChange={formik.handleChange}
+              error={formik.touched.role && Boolean(formik.errors.role)}
+              helperText={formik.touched.role && formik.errors.role}
+              margin="normal"
+            >
+              <MenuItem value="customer">Customer</MenuItem>
+              <MenuItem value="rider">Rider</MenuItem>
+            </TextField>
             {formik.values.role === 'rider' && (
               <TextField
                 fullWidth
                 id="vehicleType"
                 name="vehicleType"
+                select
                 label="Vehicle Type"
                 value={formik.values.vehicleType}
                 onChange={formik.handleChange}
                 error={formik.touched.vehicleType && Boolean(formik.errors.vehicleType)}
                 helperText={formik.touched.vehicleType && formik.errors.vehicleType}
                 margin="normal"
-              />
+              >
+                <MenuItem value="bike">Bike</MenuItem>
+                <MenuItem value="truck">Truck</MenuItem>
+                <MenuItem value="air">Air</MenuItem>
+                <MenuItem value="fuel">Fuel</MenuItem>
+              </TextField>
             )}
-            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              {formik.values.role === 'rider' ? 'Sign Up as Rider' : 'Sign Up as Customer'}
+              Sign Up
             </Button>
             
             <Divider sx={{ my: 2 }}>OR</Divider>
             
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleSignUpAsRider}
-                  sx={{ mb: 2 }}
-                >
-                  {formik.values.role === 'rider' ? 'Switch to Customer Signup' : 'Switch to Rider Signup'}
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  fullWidth
-                  variant="text"
-                  onClick={() => navigate('/login')}
-                >
-                  Already have an account? Sign In
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  fullWidth
-                  variant="text"
-                  color="secondary"
-                  onClick={() => {
-                    localStorage.setItem('preferredRole', 'rider');
-                    navigate('/login');
-                  }}
-                >
-                  Login as a Rider
-                </Button>
-              </Grid>
-            </Grid>
+            <Button
+              fullWidth
+              variant="text"
+              onClick={() => navigate('/login')}
+            >
+              Already have an account? Sign In
+            </Button>
           </Box>
         </Paper>
       </Box>
