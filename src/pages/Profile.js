@@ -5,7 +5,10 @@ import {
   Typography,
   TextField,
   Button,
-  Box
+  Box,
+  Avatar,
+  Alert,
+  Grid
 } from '@mui/material';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
