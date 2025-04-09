@@ -65,7 +65,12 @@ const Register = () => {
       console.log("Current role at submission:", values.role);
       const { success, error } = await register(values);
       if (success) {
-        navigate('/login');
+        // Navigate to appropriate dashboard based on user role
+        if (values.role === 'customer') {
+          navigate('/customer/dashboard');
+        } else if (values.role === 'rider') {
+          navigate('/rider/dashboard');
+        }
       } else {
         console.error("Registration error:", error);
       }
