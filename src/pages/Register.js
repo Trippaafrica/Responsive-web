@@ -5,7 +5,9 @@ import {
   Typography,
   TextField,
   Button,
-  Box
+  Box,
+  Grid,
+  Divider
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -54,7 +56,7 @@ const Register = () => {
       password: '',
       confirmPassword: '',
       phone: '',
-      role: '',
+      role: 'customer', // Default to customer
       vehicle_type: '',
     },
     validationSchema: validationSchema,
@@ -67,6 +69,11 @@ const Register = () => {
       }
     },
   });
+
+  const handleSignUpAsRider = () => {
+    formik.setFieldValue('role', 'rider');
+    // You can add additional validation or open a dialog for vehicle type here
+  };
 
   return (
     <Container maxWidth="sm">
@@ -150,21 +157,67 @@ const Register = () => {
               helperText={formik.touched.phone && formik.errors.phone}
               margin="normal"
             />
+            
+            {formik.values.role === 'rider' && (
+              <TextField
+                fullWidth
+                id="vehicle_type"
+                name="vehicle_type"
+                label="Vehicle Type"
+                value={formik.values.vehicle_type}
+                onChange={formik.handleChange}
+                error={formik.touched.vehicle_type && Boolean(formik.errors.vehicle_type)}
+                helperText={formik.touched.vehicle_type && formik.errors.vehicle_type}
+                margin="normal"
+              />
+            )}
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {formik.values.role === 'rider' ? 'Sign Up as Rider' : 'Sign Up as Customer'}
             </Button>
-            <Button
-              fullWidth
-              variant="text"
-              onClick={() => navigate('/login')}
-            >
-              Already have an account? Sign In
-            </Button>
+            
+            <Divider sx={{ my: 2 }}>OR</Divider>
+            
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleSignUpAsRider}
+                  sx={{ mb: 2 }}
+                >
+                  {formik.values.role === 'rider' ? 'Switch to Customer Signup' : 'Switch to Rider Signup'}
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="text"
+                  onClick={() => navigate('/login')}
+                >
+                  Already have an account? Sign In
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="text"
+                  color="secondary"
+                  onClick={() => {
+                    localStorage.setItem('preferredRole', 'rider');
+                    navigate('/login');
+                  }}
+                >
+                  Login as a Rider
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
         </Paper>
       </Box>

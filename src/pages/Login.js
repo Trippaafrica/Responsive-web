@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
   Typography,
   TextField,
   Button,
-  Box
+  Box,
+  Grid,
+  Divider
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -26,6 +28,15 @@ const validationSchema = yup.object({
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [isRider, setIsRider] = useState(false);
+
+  useEffect(() => {
+    const preferredRole = localStorage.getItem('preferredRole');
+    if (preferredRole === 'rider') {
+      setIsRider(true);
+      localStorage.removeItem('preferredRole'); // Clear after use
+    }
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -42,6 +53,10 @@ const Login = () => {
       }
     },
   });
+
+  const toggleRiderMode = () => {
+    setIsRider(!isRider);
+  };
 
   return (
     <Container maxWidth="sm">
@@ -64,7 +79,7 @@ const Login = () => {
           }}
         >
           <Typography component="h1" variant="h4" gutterBottom>
-            Login
+            {isRider ? 'Rider Login' : 'Customer Login'}
           </Typography>
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ width: '100%' }}>
@@ -97,15 +112,32 @@ const Login = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              {isRider ? 'Sign In as Rider' : 'Sign In as Customer'}
             </Button>
-            <Button
-              fullWidth
-              variant="text"
-              onClick={() => navigate('/register')}
-            >
-              Don't have an account? Sign Up
-            </Button>
+            
+            <Divider sx={{ my: 2 }}>OR</Divider>
+            
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  onClick={toggleRiderMode}
+                  sx={{ mb: 2 }}
+                >
+                  {isRider ? 'Switch to Customer Login' : 'Switch to Rider Login'}
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="text"
+                  onClick={() => navigate('/register')}
+                >
+                  Don't have an account? Sign Up
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
         </Paper>
       </Box>
