@@ -6,13 +6,10 @@ import {
   DialogActions,
   Button,
   Typography,
-  Box,
-  useTheme
+  Box
 } from '@mui/material';
 
 const DeliveryDetails = ({ delivery, open, onClose }) => {
-  const theme = useTheme();
-
   if (!delivery) return null;
 
   return (

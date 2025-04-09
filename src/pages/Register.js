@@ -1,24 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import {
-  Box,
-  Button,
   Container,
+  Paper,
   Typography,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper,
-  useTheme,
-  useMediaQuery,
-  Alert
+  Button,
+  Box
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 const validationSchema = yup.object({
   name: yup
@@ -52,18 +44,7 @@ const validationSchema = yup.object({
 });
 
 const Register = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
-    role: 'customer'
-  });
   const { register } = useAuth();
 
   const formik = useFormik({
@@ -78,12 +59,11 @@ const Register = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setError('');
       const { success, error } = await register(values);
       if (success) {
         navigate('/login');
       } else {
-        setError(error);
+        console.error(error);
       }
     },
   });
@@ -111,12 +91,6 @@ const Register = () => {
           <Typography component="h1" variant="h4" gutterBottom>
             Register
           </Typography>
-
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ width: '100%' }}>
             <TextField
@@ -176,35 +150,6 @@ const Register = () => {
               helperText={formik.touched.phone && formik.errors.phone}
               margin="normal"
             />
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Role</InputLabel>
-              <Select
-                id="role"
-                name="role"
-                value={formik.values.role}
-                onChange={formik.handleChange}
-                error={formik.touched.role && Boolean(formik.errors.role)}
-              >
-                <MenuItem value="customer">Customer</MenuItem>
-                <MenuItem value="rider">Rider</MenuItem>
-              </Select>
-            </FormControl>
-            {formik.values.role === 'rider' && (
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Vehicle Type</InputLabel>
-                <Select
-                  id="vehicle_type"
-                  name="vehicle_type"
-                  value={formik.values.vehicle_type}
-                  onChange={formik.handleChange}
-                  error={formik.touched.vehicle_type && Boolean(formik.errors.vehicle_type)}
-                >
-                  <MenuItem value="bike">Bike</MenuItem>
-                  <MenuItem value="truck">Truck</MenuItem>
-                  <MenuItem value="van">Van</MenuItem>
-                </Select>
-              </FormControl>
-            )}
             <Button
               type="submit"
               fullWidth

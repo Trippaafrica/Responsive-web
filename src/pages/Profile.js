@@ -1,23 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Box,
   Container,
-  Typography,
   Paper,
+  Typography,
   TextField,
   Button,
-  Grid,
-  Avatar,
-  useTheme,
-  useMediaQuery,
-  Alert
+  Box
 } from '@mui/material';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Profile = () => {
-  const theme = useTheme();
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -28,36 +22,6 @@ const Profile = () => {
     vehicleType: user?.vehicle_type || '',
     role: user?.role || ''
   });
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (error) throw error;
-
-        setFormData({
-          name: data.name || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          vehicleType: data.vehicle_type || '',
-          role: data.role || ''
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchProfile();
-    }
-  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

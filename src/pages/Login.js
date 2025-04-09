@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import {
-  Box,
-  Button,
   Container,
+  Paper,
   Typography,
   TextField,
-  Paper,
-  useTheme,
-  Alert
+  Button,
+  Box
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const validationSchema = yup.object({
   email: yup
@@ -26,14 +24,7 @@ const validationSchema = yup.object({
 });
 
 const Login = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
   const { login } = useAuth();
 
   const formik = useFormik({
@@ -43,14 +34,11 @@ const Login = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      setError('');
       const { success, error } = await login(values.email, values.password);
       if (success) {
         // Get user role from metadata
         const userRole = success.data.user.user_metadata.role;
         navigate(userRole === 'rider' ? '/rider/dashboard' : '/customer/dashboard');
-      } else {
-        setError(error);
       }
     },
   });
@@ -78,12 +66,6 @@ const Login = () => {
           <Typography component="h1" variant="h4" gutterBottom>
             Login
           </Typography>
-          
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={formik.handleSubmit} sx={{ width: '100%' }}>
             <TextField
