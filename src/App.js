@@ -77,7 +77,7 @@ function App() {
             <Route
               path="/profile"
               element={
-                <PrivateRoute>
+                <PrivateRoute roles={['customer', 'rider']}>
                   <Profile />
                 </PrivateRoute>
               }
