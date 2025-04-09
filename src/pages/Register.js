@@ -71,8 +71,9 @@ const Register = () => {
   });
 
   const handleSignUpAsRider = () => {
-    formik.setFieldValue('role', 'rider');
-    // You can add additional validation or open a dialog for vehicle type here
+    // Toggle between rider and customer roles
+    const newRole = formik.values.role === 'rider' ? 'customer' : 'rider';
+    formik.setFieldValue('role', newRole);
   };
 
   return (
