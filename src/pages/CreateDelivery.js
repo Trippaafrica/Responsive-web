@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import Map, { Marker, NavigationControl } from 'react-map-gl';
+import Map from 'react-map-gl/dist/esm/components/map';
+import Marker from 'react-map-gl/dist/esm/components/marker';
+import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
 
