@@ -59,7 +59,7 @@ function App() {
               }
             />
             <Route
-              path="/delivery/create"
+              path="/deliveries/create"
               element={
                 <PrivateRoute role="customer">
                   <CreateDelivery />
@@ -67,9 +67,9 @@ function App() {
               }
             />
             <Route
-              path="/delivery/:id"
+              path="/deliveries/:id"
               element={
-                <PrivateRoute>
+                <PrivateRoute roles={['customer', 'rider']}>
                   <DeliveryDetails />
                 </PrivateRoute>
               }

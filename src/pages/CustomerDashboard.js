@@ -25,6 +25,8 @@ import {
   LocalShipping
 } from '@mui/icons-material';
 import axios from 'axios';
+import { supabase } from '../lib/supabase';
+import DeliveryDetails from './DeliveryDetails';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
