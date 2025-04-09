@@ -25,13 +25,15 @@ import {
   AttachMoney
 } from '@mui/icons-material';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const RiderDashboard = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [availableDeliveries, setAvailableDeliveries] = useState([]);
-  const [myBids, setMyBids] = useState([]);
+  const { user } = useAuth();
+  const [deliveries, setDeliveries] = useState([]);
+  const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -47,7 +49,7 @@ const RiderDashboard = () => {
   const fetchAvailableDeliveries = async () => {
     try {
       const res = await axios.get('/api/deliveries/available');
-      setAvailableDeliveries(res.data);
+      setDeliveries(res.data);
     } catch (err) {
       console.error('Error fetching available deliveries:', err);
     }
@@ -56,7 +58,7 @@ const RiderDashboard = () => {
   const fetchMyBids = async () => {
     try {
       const res = await axios.get('/api/bids/my-bids');
-      setMyBids(res.data);
+      setBids(res.data);
     } catch (err) {
       console.error('Error fetching my bids:', err);
     } finally {
@@ -108,7 +110,7 @@ const RiderDashboard = () => {
         <Typography>Loading...</Typography>
       ) : (
         <Grid container spacing={3}>
-          {availableDeliveries.map((delivery) => (
+          {deliveries.map((delivery) => (
             <Grid item xs={12} sm={6} md={4} key={delivery._id}>
               <Card>
                 <CardContent>
@@ -160,7 +162,7 @@ const RiderDashboard = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {myBids.map((bid) => (
+        {bids.map((bid) => (
           <Grid item xs={12} sm={6} md={4} key={bid._id}>
             <Card>
               <CardContent>

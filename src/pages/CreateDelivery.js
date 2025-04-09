@@ -12,8 +12,7 @@ import {
   MenuItem,
   Grid,
   Paper,
-  useTheme,
-  useMediaQuery
+  useTheme
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -22,6 +21,7 @@ import Marker from 'react-map-gl/dist/esm/components/marker';
 import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
+import { supabase } from '../lib/supabase';
 
 const validationSchema = yup.object({
   deliveryType: yup
@@ -71,13 +71,26 @@ const validationSchema = yup.object({
 const CreateDelivery = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [pickupMarker, setPickupMarker] = useState(null);
   const [destinationMarker, setDestinationMarker] = useState(null);
-  const [mapView, setMapView] = useState({
+  const [mapView] = useState({
     latitude: 0,
     longitude: 0,
     zoom: 2
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    pickupAddress: '',
+    destinationAddress: '',
+    packageDetails: '',
+    deliveryType: 'standard',
+    weight: '',
+    dimensions: {
+      length: '',
+      width: '',
+      height: ''
+    }
   });
 
   const formik = useFormik({

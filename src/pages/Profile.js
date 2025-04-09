@@ -13,21 +13,20 @@ import {
   Alert
 } from '@mui/material';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const Profile = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { user, updateUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    vehicle_type: '',
-    role: ''
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    vehicleType: user?.vehicle_type || '',
+    role: user?.role || ''
   });
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const Profile = () => {
           name: data.name || '',
           email: data.email || '',
           phone: data.phone || '',
-          vehicle_type: data.vehicle_type || '',
+          vehicleType: data.vehicle_type || '',
           role: data.role || ''
         });
       } catch (err) {
@@ -166,8 +165,8 @@ const Profile = () => {
                 <TextField
                   fullWidth
                   label="Vehicle Type"
-                  name="vehicle_type"
-                  value={formData.vehicle_type}
+                  name="vehicleType"
+                  value={formData.vehicleType}
                   onChange={handleChange}
                   required
                   select

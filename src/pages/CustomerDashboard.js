@@ -27,11 +27,12 @@ import {
 import axios from 'axios';
 import { supabase } from '../lib/supabase';
 import DeliveryDetails from './DeliveryDetails';
+import { useAuth } from '../contexts/AuthContext';
 
 const CustomerDashboard = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDelivery, setSelectedDelivery] = useState(null);

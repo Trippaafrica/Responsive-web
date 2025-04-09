@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -18,6 +18,7 @@ import {
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 const validationSchema = yup.object({
   name: yup
@@ -51,11 +52,19 @@ const validationSchema = yup.object({
 });
 
 const Register = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    role: 'customer'
+  });
   const { register } = useAuth();
-  const [error, setError] = React.useState('');
 
   const formik = useFormik({
     initialValues: {

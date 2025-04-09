@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   TextField,
   Paper,
   useTheme,
-  useMediaQuery,
   Alert
 } from '@mui/material';
 import { useFormik } from 'formik';
@@ -27,11 +26,15 @@ const validationSchema = yup.object({
 });
 
 const Login = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const { login } = useAuth();
-  const [error, setError] = React.useState('');
 
   const formik = useFormik({
     initialValues: {
