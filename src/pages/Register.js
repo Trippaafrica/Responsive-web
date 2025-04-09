@@ -36,7 +36,7 @@ const validationSchema = yup.object({
   role: yup
     .string()
     .required('Role is required'),
-  vehicle_type: yup
+  vehicleType: yup
     .string()
     .when('role', {
       is: 'rider',
@@ -57,23 +57,32 @@ const Register = () => {
       confirmPassword: '',
       phone: '',
       role: 'customer', // Default to customer
-      vehicle_type: '',
+      vehicleType: '',
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
+      console.log("Submitting form with values:", values);
+      console.log("Current role at submission:", values.role);
       const { success, error } = await register(values);
       if (success) {
         navigate('/login');
       } else {
-        console.error(error);
+        console.error("Registration error:", error);
       }
     },
   });
 
   const handleSignUpAsRider = () => {
     // Toggle between rider and customer roles
+    console.log("Current role before toggle:", formik.values.role);
     const newRole = formik.values.role === 'rider' ? 'customer' : 'rider';
+    console.log("New role after toggle:", newRole);
     formik.setFieldValue('role', newRole);
+    
+    // Verify the role was updated
+    setTimeout(() => {
+      console.log("Role after setFieldValue:", formik.values.role);
+    }, 0);
   };
 
   return (
@@ -162,13 +171,13 @@ const Register = () => {
             {formik.values.role === 'rider' && (
               <TextField
                 fullWidth
-                id="vehicle_type"
-                name="vehicle_type"
+                id="vehicleType"
+                name="vehicleType"
                 label="Vehicle Type"
-                value={formik.values.vehicle_type}
+                value={formik.values.vehicleType}
                 onChange={formik.handleChange}
-                error={formik.touched.vehicle_type && Boolean(formik.errors.vehicle_type)}
-                helperText={formik.touched.vehicle_type && formik.errors.vehicle_type}
+                error={formik.touched.vehicleType && Boolean(formik.errors.vehicleType)}
+                helperText={formik.touched.vehicleType && formik.errors.vehicleType}
                 margin="normal"
               />
             )}

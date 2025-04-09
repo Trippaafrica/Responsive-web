@@ -53,11 +53,17 @@ export const AuthProvider = ({ children }) => {
   // Register user
   const register = async (formData) => {
     try {
+      console.log("In AuthContext - Registering with data:", formData);
+      console.log("User role being sent to API:", formData.role);
+      
       const res = await axios.post('/api/auth/register', formData);
+      console.log("Registration response:", res.data);
+      
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
       return { success: true };
     } catch (err) {
+      console.error("Registration error details:", err.response?.data);
       setError(err.response?.data?.message || 'Registration failed');
       return { success: false, error: err.response?.data?.message };
     }
