@@ -13,9 +13,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  useTheme,
-  useMediaQuery
+  TextField
 } from '@mui/material';
 import {
   LocationOn,
