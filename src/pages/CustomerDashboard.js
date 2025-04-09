@@ -10,13 +10,10 @@ import {
   CardContent,
   CardActions,
   Chip,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  useTheme,
-  useMediaQuery
+  DialogActions
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -25,14 +22,9 @@ import {
   LocalShipping
 } from '@mui/icons-material';
 import axios from 'axios';
-import { supabase } from '../lib/supabase';
-import DeliveryDetails from './DeliveryDetails';
-import { useAuth } from '../contexts/AuthContext';
 
 const CustomerDashboard = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDelivery, setSelectedDelivery] = useState(null);

@@ -34,7 +34,7 @@ const Login = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const { success, error } = await login(values.email, values.password);
+      const { success } = await login(values.email, values.password);
       if (success) {
         // Get user role from metadata
         const userRole = success.data.user.user_metadata.role;

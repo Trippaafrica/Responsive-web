@@ -1,27 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import {
-  Box,
-  Button,
   Container,
+  Paper,
   Typography,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Button,
   Grid,
-  Paper,
-  useTheme
+  Box
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import Map from 'react-map-gl/dist/esm/components/map';
-import Marker from 'react-map-gl/dist/esm/components/marker';
-import NavigationControl from 'react-map-gl/dist/esm/components/navigation-control';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import axios from 'axios';
-import { supabase } from '../lib/supabase';
 
 const validationSchema = yup.object({
   deliveryType: yup
@@ -70,28 +59,6 @@ const validationSchema = yup.object({
 
 const CreateDelivery = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const [pickupMarker, setPickupMarker] = useState(null);
-  const [destinationMarker, setDestinationMarker] = useState(null);
-  const [mapView] = useState({
-    latitude: 0,
-    longitude: 0,
-    zoom: 2
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({
-    pickupAddress: '',
-    destinationAddress: '',
-    packageDetails: '',
-    deliveryType: 'standard',
-    weight: '',
-    dimensions: {
-      length: '',
-      width: '',
-      height: ''
-    }
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -126,23 +93,6 @@ const CreateDelivery = () => {
       }
     },
   });
-
-  const handleMapClick = (event) => {
-    const { lngLat } = event;
-    if (!pickupMarker) {
-      setPickupMarker(lngLat);
-      formik.setFieldValue('pickupLocation.coordinates', {
-        lat: lngLat.lat,
-        lng: lngLat.lng
-      });
-    } else if (!destinationMarker) {
-      setDestinationMarker(lngLat);
-      formik.setFieldValue('destination.coordinates', {
-        lat: lngLat.lat,
-        lng: lngLat.lng
-      });
-    }
-  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

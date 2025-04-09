@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -21,17 +20,11 @@ import {
 import {
   LocationOn,
   AccessTime,
-  LocalShipping,
   AttachMoney
 } from '@mui/icons-material';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
 
 const RiderDashboard = () => {
-  const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { user } = useAuth();
   const [deliveries, setDeliveries] = useState([]);
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true);
